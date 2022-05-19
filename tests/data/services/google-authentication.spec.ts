@@ -1,5 +1,6 @@
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
+import { LoadGoogleUserApi } from '@/data/contracts/apis'
 
 class GoogleAuthenticationService {
   constructor (
@@ -11,18 +12,6 @@ class GoogleAuthenticationService {
 
     return new AuthenticationError()
   }
-}
-
-interface LoadGoogleUserApi {
-  loadUser: (params: LoadGoogleUserApi.Params) => Promise<LoadGoogleUserApi.Result>
-}
-
-namespace LoadGoogleUserApi {
-  export type Params = {
-    token: string
-  }
-
-  export type Result = undefined
 }
 
 class LoadGoogleUserApiSpy implements LoadGoogleUserApi {
