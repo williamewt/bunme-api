@@ -1,11 +1,11 @@
 import { AuthenticationError } from '@/domain/errors'
+import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { GoogleAuthenticationService } from '@/data/contracts/apis/services'
+import { mock } from 'jest-mock-extended'
 
 describe('GoogleAuthenticationService', () => {
   it('Should call LoadGoogleUserApi with correct params', async () => {
-    const loadGoogleUserApi = {
-      loadUser: jest.fn()
-    }
+    const loadGoogleUserApi = mock<LoadGoogleUserApi>()
 
     const sut = new GoogleAuthenticationService(loadGoogleUserApi)
 
@@ -16,9 +16,7 @@ describe('GoogleAuthenticationService', () => {
   })
 
   it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
-    const loadGoogleUserApi = {
-      loadUser: jest.fn()
-    }
+    const loadGoogleUserApi = mock<LoadGoogleUserApi>()
 
     loadGoogleUserApi.loadUser.mockResolvedValueOnce(undefined)
     const sut = new GoogleAuthenticationService(loadGoogleUserApi)
