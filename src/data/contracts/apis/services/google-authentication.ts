@@ -1,12 +1,13 @@
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
-import { LoadUserAccountRepository } from '@/data/contracts/repos'
+import { CreateGoogleAccountRepository, LoadUserAccountRepository } from '@/data/contracts/repos'
 
 export class GoogleAuthenticationService {
   constructor (
     private readonly loadGoogleUserApi: LoadGoogleUserApi,
-    private readonly loadUserAccountRepo: LoadUserAccountRepository
+    private readonly loadUserAccountRepo: LoadUserAccountRepository,
+    private readonly createGoogleAccountRepo: CreateGoogleAccountRepository
   ) { }
 
   async perform (params: GoogleAuthentication.Params): Promise<AuthenticationError> {
@@ -14,6 +15,7 @@ export class GoogleAuthenticationService {
 
     if (gData !== undefined) {
       await this.loadUserAccountRepo.load({ email: gData.email })
+      await this.createGoogleAccountRepo.createFromGoogle(gData)
     }
 
     return new AuthenticationError()
