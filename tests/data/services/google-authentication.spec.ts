@@ -5,37 +5,34 @@ import { CreateGoogleAccountRepository, LoadUserAccountRepository } from '@/data
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GoogleAuthenticationService', () => {
-  let loadGoogleUserApi: MockProxy<LoadGoogleUserApi>
-  let loadUserAccountRepo: MockProxy<LoadUserAccountRepository>
-  let createGoogleAccountRepo: MockProxy<CreateGoogleAccountRepository>
+  let googleApi: MockProxy<LoadGoogleUserApi>
+  let userAccountRepo: MockProxy<LoadUserAccountRepository & CreateGoogleAccountRepository>
   let sut: GoogleAuthenticationService
   const token = 'any_token'
 
   beforeEach(() => {
-    loadGoogleUserApi = mock()
-    loadGoogleUserApi.loadUser.mockResolvedValue({
+    googleApi = mock()
+    googleApi.loadUser.mockResolvedValue({
       name: 'any_g_name',
       email: 'any_g_email',
       googleId: 'any_g_id'
     })
-    loadUserAccountRepo = mock()
-    createGoogleAccountRepo = mock()
+    userAccountRepo = mock()
     sut = new GoogleAuthenticationService(
-      loadGoogleUserApi,
-      loadUserAccountRepo,
-      createGoogleAccountRepo
+      googleApi,
+      userAccountRepo
     )
   })
 
   it('Should call LoadGoogleUserApi with correct params', async () => {
     await sut.perform({ token })
 
-    expect(loadGoogleUserApi.loadUser).toHaveBeenCalledWith({ token })
-    expect(loadGoogleUserApi.loadUser).toHaveBeenCalledTimes(1)
+    expect(googleApi.loadUser).toHaveBeenCalledWith({ token })
+    expect(googleApi.loadUser).toHaveBeenCalledTimes(1)
   })
 
   it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
-    loadGoogleUserApi.loadUser.mockResolvedValueOnce(undefined)
+    googleApi.loadUser.mockResolvedValueOnce(undefined)
 
     const authResult = await sut.perform({ token })
 
@@ -45,20 +42,20 @@ describe('GoogleAuthenticationService', () => {
   it('Should call LoadUserAccountRepo when LoadGoogleUserApi returns data', async () => {
     await sut.perform({ token })
 
-    expect(loadUserAccountRepo.load).toHaveBeenCalledWith({ email: 'any_g_email' })
-    expect(loadUserAccountRepo.load).toHaveBeenCalledTimes(1)
+    expect(userAccountRepo.load).toHaveBeenCalledWith({ email: 'any_g_email' })
+    expect(userAccountRepo.load).toHaveBeenCalledTimes(1)
   })
 
   it('Should call CreateUserAccountRepo when LoadGoogleUserApi returns undefined', async () => {
-    loadUserAccountRepo.load.mockResolvedValueOnce(undefined)
+    userAccountRepo.load.mockResolvedValueOnce(undefined)
 
     await sut.perform({ token })
 
-    expect(createGoogleAccountRepo.createFromGoogle).toHaveBeenCalledWith({
+    expect(userAccountRepo.createFromGoogle).toHaveBeenCalledWith({
       name: 'any_g_name',
       email: 'any_g_email',
       googleId: 'any_g_id'
     })
-    expect(createGoogleAccountRepo.createFromGoogle).toHaveBeenCalledTimes(1)
+    expect(userAccountRepo.createFromGoogle).toHaveBeenCalledTimes(1)
   })
 })
