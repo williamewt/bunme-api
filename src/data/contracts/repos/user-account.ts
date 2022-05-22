@@ -7,17 +7,32 @@ export namespace LoadUserAccountRepository {
     email: string
   }
 
-  export type Result = undefined
+  export type Result = undefined | {
+    id: string
+    name?: string
+  }
 }
 
-export interface CreateGoogleAccountRepository {
-  createFromGoogle: (params: CreateGoogleAccountRepository.Params) => Promise<void>
+export interface CreateFacebookAccountRepository {
+  createFromFacebook: (params: CreateFacebookAccountRepository.Params) => Promise<void>
 }
 
-export namespace CreateGoogleAccountRepository {
+export namespace CreateFacebookAccountRepository {
   export type Params = {
     name: string
     email: string
-    googleId: string
+    facebookId: string
+  }
+}
+
+export interface UpdateFacebookAccountRepository {
+  updateWithFacebook: (params: UpdateFacebookAccountRepository.Params) => Promise<void>
+}
+
+export namespace UpdateFacebookAccountRepository {
+  export type Params = {
+    id: string
+    name: string
+    facebookId: string
   }
 }

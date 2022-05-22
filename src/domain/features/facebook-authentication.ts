@@ -1,11 +1,11 @@
 import { AccessToken } from '@/domain/models'
 import { AuthenticationError } from '@/domain/errors'
 
-export interface GoogleAuthentication {
-  perform: (params: GoogleAuthentication.Params) => Promise<GoogleAuthentication.Result>
+export interface FacebookAuthentication {
+  perform: (params: FacebookAuthentication.Params) => Promise<FacebookAuthentication.Result>
 }
 
-export namespace GoogleAuthentication {
+export namespace FacebookAuthentication {
 
   export type Params = {
     token: string

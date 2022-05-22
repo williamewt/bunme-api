@@ -1,1 +1,1 @@
-export * from './google-authentication'
+export * from './facebook-authentication'
