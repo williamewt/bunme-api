@@ -1,5 +1,7 @@
+import { PrismaClientContext } from '@/data/contracts/contexts'
+
 export interface LoadUserAccountRepository {
-  load: (params: LoadUserAccountRepository.Params) => Promise<LoadUserAccountRepository.Result>
+  load: (params: LoadUserAccountRepository.Params, ctx: PrismaClientContext.Context) => Promise<LoadUserAccountRepository.Result>
 }
 
 export namespace LoadUserAccountRepository {

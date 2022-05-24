@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User  {
+  id              BigInt        @id(map: "pk_user_id") @default(autoincrement())
+  name            String?       @db.VarChar(255)
+  email           String?       @db.VarChar(255) @unique
+  cellphone       String?       @db.VarChar(255) @unique
+  password        String?       @db.VarChar(255)
+  metas           UserMeta[]
+  homemadeMeasures HomemadeMeasures[]
+  facebookId      String?       @db.VarChar(255)
+  googleId        String?       @db.VarChar(255)
+  createdAt       DateTime?     @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime?     @default(now()) @db.Timestamp(6)
+
+  @@map("users")
+}
+
+model UserMeta {
+  id              BigInt     @id(map: "pk_user_meta_id") @default(autoincrement())
+  user            User       @relation(fields: [userId], references: [id])
+  userId          BigInt
+  metaKey         String     @db.VarChar(255) @unique
+  metaValue       String     @db.Text
+
+  @@map("users_metas")
+}
+
+model Food {
+  id              BigInt    @id(map: "pk_food_id") @default(autoincrement())
+  descricao       String    @db.VarChar(255)
+  quantidade      Decimal?  @db.Decimal(11, 5)
+  energia         Decimal?  @db.Decimal(11, 5)
+  proteina        Decimal?  @db.Decimal(11, 5)
+  lipideos        Decimal?  @db.Decimal(11, 5)
+  cho             Decimal?  @db.Decimal(11, 5)
+  saturada        Decimal?  @db.Decimal(11, 5)
+  fibra           Decimal?  @db.Decimal(11, 5)
+  folato          Decimal?  @db.Decimal(11, 5)
+  ferro           Decimal?  @db.Decimal(11, 5)
+  zinco           Decimal?  @db.Decimal(11, 5)
+  mg              Decimal?  @db.Decimal(11, 5)
+  mn              Decimal?  @db.Decimal(11, 5)
+  calcio          Decimal?  @db.Decimal(11, 5)
+  sodio           Decimal?  @db.Decimal(11, 5)
+  trans           Decimal?  @db.Decimal(11, 5)
+  acucartotal     Decimal?  @db.Decimal(11, 5)
+  colesterol      Decimal?  @db.Decimal(11, 5)
+  polisat         Decimal?  @db.Decimal(11, 5)
+  monosat         Decimal?  @db.Decimal(11, 5)
+  vitaminaa       Decimal?  @db.Decimal(11, 5)
+  vitaminac       Decimal?  @db.Decimal(11, 5)
+  vitaminad       Decimal?  @db.Decimal(11, 5)
+  vitaminae       Decimal?  @db.Decimal(11, 5)
+  tiamina         Decimal?  @db.Decimal(11, 5)
+  riboflavina     Decimal?  @db.Decimal(11, 5)
+  niacina         Decimal?  @db.Decimal(11, 5)
+  piridoxina      Decimal?  @db.Decimal(11, 5)
+  cobalamina      Decimal?  @db.Decimal(11, 5)
+  ativo           Int?      @db.SmallInt
+  p               Decimal?  @db.Decimal(11, 5)
+  potassio        Decimal?  @db.Decimal(11, 5)
+  tabela          Decimal?  @db.Decimal(11, 5)
+  idgrupoalimento String?   @db.VarChar(255)
+  selenio         Decimal?  @db.Decimal(11, 5)
+  homemadeMeasures HomemadeMeasures[]
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("foods")
+}
+
+model HomemadeMeasures {
+  id              Int      @id(map: "pk_homemade_measure_id") @default(autoincrement())
+  qtd             BigInt?
+  description     String   @db.VarChar(255)
+  nutritionist    User?   @relation(fields: [nutritionistId], references: [id])
+  nutritionistId  BigInt?
+  food            Food    @relation(fields: [foodId], references: [id])
+  foodId          BigInt
+  updatedAt       DateTime @default(now()) @db.Timestamp(6)
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("homemade_measures")
+}
