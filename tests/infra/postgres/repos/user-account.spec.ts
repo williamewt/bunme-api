@@ -1,5 +1,5 @@
 import { User } from '@/domain/models'
-import { PgUserAccountRepository } from '@/data/contracts/repos/inmemmory'
+import { PgUserAccountRepository } from '@/tests/infra/postgres/inmemmory'
 
 describe('PgUserAccountRepository', () => {
   let sut: PgUserAccountRepository
@@ -16,6 +16,7 @@ describe('PgUserAccountRepository', () => {
     sut = new PgUserAccountRepository()
     sut.items = []
   })
+
   describe('load', () => {
     it('should return a account id if email exists', async () => {
       sut.items.push(userData)
@@ -31,6 +32,18 @@ describe('PgUserAccountRepository', () => {
       const account = await sut.load({ email: 'not_existing_email' })
 
       expect(account).toEqual(undefined)
+    })
+  })
+
+  describe('saveWithFacebook', () => {
+    it('should an account if id is undefined', async () => {
+      const account = await sut.saveWithFacebook({
+        name: 'any_name',
+        email: 'any_email',
+        facebookId: 'any_fb_id'
+      })
+
+      expect(account).toEqual({ id: '1' })
     })
   })
 })
