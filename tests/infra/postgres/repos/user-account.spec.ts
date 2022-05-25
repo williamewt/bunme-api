@@ -1,61 +1,36 @@
-import { LoadUserAccountRepository } from '@/data/contracts/repos'
-import { PrismaClient, User } from '@prisma/client'
-import { mockDeep } from 'jest-mock-extended'
-import { PrismaClientContext } from '@/data/contracts/contexts'
-
-class PgUserAccountRepository implements LoadUserAccountRepository {
-  async load (params: LoadUserAccountRepository.Params, ctx: PrismaClientContext.Context): Promise<LoadUserAccountRepository.Result> {
-    const pgUser = await ctx.prisma.user.findUnique({
-      where: {
-        email: params.email
-      },
-      select: {
-        id: true,
-        name: true
-      }
-    })
-    if (pgUser !== null) {
-      return {
-        id: pgUser.id.toString(),
-        name: (pgUser.name !== null && pgUser.name !== '') ? pgUser.name : undefined
-      }
-    }
-  }
-}
+import { User } from '@/domain/models'
+import { PgUserAccountRepository } from '@/data/contracts/repos/inmemmory'
 
 describe('PgUserAccountRepository', () => {
-  let mockCtx: PrismaClientContext.MockContext
-  let ctx: PrismaClientContext.Context
+  let sut: PgUserAccountRepository
   let userData: User
 
   beforeAll(() => {
-    const date = new Date()
     userData = {
       id: 1n,
-      name: '',
-      email: 'existing_email',
-      cellphone: '',
-      password: '',
-      facebookId: '',
-      googleId: '',
-      createdAt: date,
-      updatedAt: date
+      email: 'existing_email'
     }
   })
 
   beforeEach(() => {
-    mockCtx = { prisma: mockDeep<PrismaClient>() }
-    ctx = mockCtx as unknown as PrismaClientContext.Context
+    sut = new PgUserAccountRepository()
+    sut.items = []
   })
   describe('load', () => {
-    it('should return a account if email exists', async () => {
-      const sut = new PgUserAccountRepository()
+    it('should return a account id if email exists', async () => {
+      sut.items.push(userData)
 
-      mockCtx.prisma.user.findUnique.mockResolvedValueOnce(userData)
-
-      const account = await sut.load({ email: 'existing_email' }, ctx)
+      const account = await sut.load({ email: 'existing_email' })
 
       expect(account).toEqual({ id: '1' })
+    })
+
+    it('should return undefined if email not exists', async () => {
+      sut.items.push(userData)
+
+      const account = await sut.load({ email: 'not_existing_email' })
+
+      expect(account).toEqual(undefined)
     })
   })
 })

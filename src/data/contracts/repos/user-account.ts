@@ -1,7 +1,5 @@
-import { PrismaClientContext } from '@/data/contracts/contexts'
-
 export interface LoadUserAccountRepository {
-  load: (params: LoadUserAccountRepository.Params, ctx: PrismaClientContext.Context) => Promise<LoadUserAccountRepository.Result>
+  load: (params: LoadUserAccountRepository.Params) => Promise<LoadUserAccountRepository.Result>
 }
 
 export namespace LoadUserAccountRepository {
@@ -25,6 +23,11 @@ export namespace SaveFacebookAccountRepository {
     name: string
     email: string
     facebookId: string
+    cellphone?: string
+    password?: string
+    googleId?: string
+    createdAt?: Date
+    updatedAt?: Date
   }
 
   export type Result = {

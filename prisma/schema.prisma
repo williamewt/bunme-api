@@ -18,7 +18,7 @@ model User  {
   facebookId      String?       @db.VarChar(255)
   googleId        String?       @db.VarChar(255)
   createdAt       DateTime?     @default(now()) @db.Timestamp(6)
-  updatedAt       DateTime?     @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime?     @updatedAt
 
   @@map("users")
 }
@@ -72,7 +72,7 @@ model Food {
   selenio         Decimal?  @db.Decimal(11, 5)
   homemadeMeasures HomemadeMeasures[]
   createdAt       DateTime @default(now()) @db.Timestamp(6)
-  updatedAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @updatedAt
 
   @@map("foods")
 }
@@ -85,8 +85,8 @@ model HomemadeMeasures {
   nutritionistId  BigInt?
   food            Food    @relation(fields: [foodId], references: [id])
   foodId          BigInt
-  updatedAt       DateTime @default(now()) @db.Timestamp(6)
   createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @updatedAt
 
   @@map("homemade_measures")
 }

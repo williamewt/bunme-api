@@ -4,10 +4,8 @@ import { FacebookAuthenticationService } from '@/data/contracts/apis/services'
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
 import { AccessToken, FacebookAccount } from '@/domain/models'
 import { TokenGenerator } from '@/data/contracts/crypto'
-import { PrismaClientContext } from '@/data/contracts/contexts'
 
-import { mock, mockDeep, MockProxy } from 'jest-mock-extended'
-import { PrismaClient } from '@prisma/client'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 jest.mock('@/domain/models/facebook-account')
 
@@ -15,8 +13,6 @@ describe('FacebookAuthenticationService', () => {
   let facebookApi: MockProxy<LoadFacebookUserApi>
   let crypto: MockProxy<TokenGenerator>
   let userAccountRepo: MockProxy<LoadUserAccountRepository & SaveFacebookAccountRepository>
-  let mockCtx: PrismaClientContext.MockContext
-  let ctx: PrismaClientContext.Context
   let sut: FacebookAuthenticationService
   let token: string
 
@@ -36,13 +32,10 @@ describe('FacebookAuthenticationService', () => {
   })
 
   beforeEach(() => {
-    mockCtx = { prisma: mockDeep<PrismaClient>() }
-    ctx = mockCtx as unknown as PrismaClientContext.Context
     sut = new FacebookAuthenticationService(
       facebookApi,
       userAccountRepo,
-      crypto,
-      ctx
+      crypto
     )
   })
 
@@ -64,7 +57,7 @@ describe('FacebookAuthenticationService', () => {
   it('Should call LoadUserAccountRepo when LoadFacebookUserApi returns data', async () => {
     await sut.perform({ token })
 
-    expect(userAccountRepo.load).toHaveBeenCalledWith({ email: 'any_fb_email' }, ctx)
+    expect(userAccountRepo.load).toHaveBeenCalledWith({ email: 'any_fb_email' })
     expect(userAccountRepo.load).toHaveBeenCalledTimes(1)
   })
 
