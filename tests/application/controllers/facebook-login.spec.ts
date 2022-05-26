@@ -24,7 +24,7 @@ describe('FacebookLoginController', () => {
     })
   })
 
-  it('should return 400 if token is empty', async () => {
+  it('should return 400 if token is null', async () => {
     const sut = new FacebookLoginController()
 
     const httpResponse = await sut.handle({ token: null })
