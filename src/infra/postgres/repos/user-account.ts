@@ -1,5 +1,5 @@
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
-import { User } from '@/domain/models'
+import { prisma } from '@/main/database'
 
 type LoadParams = LoadUserAccountRepository.Params
 type LoadResult = LoadUserAccountRepository.Result
@@ -7,12 +7,17 @@ type SaveFacebookParams = SaveFacebookAccountRepository.Params
 type SaveFacebookResult = SaveFacebookAccountRepository.Result
 
 export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
-  public items: User[] = []
-
   async load (params: LoadParams): Promise<LoadResult> {
-    const pgUser = this.items.find(user => user.email === params.email)
-
-    if (pgUser !== undefined) {
+    const pgUser = await prisma.user.findUnique({
+      where: {
+        email: params.email
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    })
+    if (pgUser !== null) {
       return {
         id: pgUser.id.toString(),
         name: pgUser.name ?? undefined
@@ -21,21 +26,28 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveF
   }
 
   async saveWithFacebook (params: SaveFacebookParams): Promise<SaveFacebookResult> {
-    let id: bigint
+    let id: string
     if (params.id === undefined) {
-      id = BigInt(this.items.length + 1)
-      this.items.push({
-        id,
-        name: params.name,
-        email: params.email,
-        facebookId: params.facebookId
+      const pgUser = await prisma.user.create({
+        data: {
+          name: params.name,
+          email: params.email,
+          facebookId: params.facebookId
+        }
       })
+      id = pgUser.id.toString()
     } else {
-      id = BigInt(params.id)
-      const itemIndex = this.items.findIndex(user => user.id === id)
-      this.items[itemIndex].name = params.name
-      this.items[itemIndex].facebookId = params.facebookId
+      id = params.id
+      await prisma.user.update({
+        where: {
+          id: BigInt(id)
+        },
+        data: {
+          name: params.name,
+          facebookId: params.facebookId
+        }
+      })
     }
-    return { id: id.toString() }
+    return { id }
   }
 }
