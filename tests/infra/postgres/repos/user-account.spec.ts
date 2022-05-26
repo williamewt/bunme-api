@@ -1,5 +1,5 @@
 import { User } from '@/domain/models'
-import { PgUserAccountRepository } from '@/tests/infra/postgres/inmemmory'
+import { PgUserAccountRepository } from '@/../tests/infra/postgres/in_memmory'
 
 describe('PgUserAccountRepository', () => {
   let sut: PgUserAccountRepository

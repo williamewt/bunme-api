@@ -1,10 +1,14 @@
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
 import { User } from '@/domain/models'
 
+type LoadParams = LoadUserAccountRepository.Params
+type LoadResult = LoadUserAccountRepository.Result
+type SaveFacebookParams = SaveFacebookAccountRepository.Params
+
 export class PgUserAccountRepository implements LoadUserAccountRepository {
   public items: User[] = []
 
-  async load (params: LoadUserAccountRepository.Params): Promise<LoadUserAccountRepository.Result> {
+  async load (params: LoadParams): Promise<LoadResult> {
     const pgUser = this.items.find(user => user.email === params.email)
 
     if (pgUser !== undefined) {
@@ -15,7 +19,7 @@ export class PgUserAccountRepository implements LoadUserAccountRepository {
     }
   }
 
-  async saveWithFacebook (params: SaveFacebookAccountRepository.Params): Promise<void> {
+  async saveWithFacebook (params: SaveFacebookParams): Promise<void> {
     if (params.id === undefined) {
       const id = BigInt(this.items.length + 1)
       this.items.push({
