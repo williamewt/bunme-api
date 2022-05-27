@@ -1,11 +1,11 @@
 export type User = {
   id: bigint
-  name?: string
+  name?: string | null
   email: string
-  cellphone?: string
-  password?: string
-  facebookId?: string
-  googleId?: string
-  createdAt?: Date
-  updatedAt?: Date
+  cellphone?: string | null
+  password?: string | null
+  facebookId?: string | null
+  googleId?: string | null
+  createdAt?: Date | null
+  updatedAt?: Date | null
 }

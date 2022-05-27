@@ -1,8 +1,8 @@
 import { User } from '@/domain/models'
-import { PgUserAccountRepository } from '@/../tests/infra/postgres/in_memmory'
+import { PgUserAccountRepositoryInMemmory } from '@/tests/infra/postgres/in_memmory'
 
-describe('PgUserAccountRepository', () => {
-  let sut: PgUserAccountRepository
+describe('PgUserAccountRepositoryInMemmory', () => {
+  let sut: PgUserAccountRepositoryInMemmory
   let userData: User
 
   beforeAll(() => {
@@ -13,7 +13,7 @@ describe('PgUserAccountRepository', () => {
   })
 
   beforeEach(() => {
-    sut = new PgUserAccountRepository()
+    sut = new PgUserAccountRepositoryInMemmory()
     sut.items = []
   })
 

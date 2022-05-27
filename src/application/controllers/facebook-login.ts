@@ -4,7 +4,7 @@ import { AccessToken } from '@/domain/models'
 import { RequiredFieldError } from '@/application/errors'
 
 type HttpRequest = {
-  token: string | undefined | null
+  token: string
 }
 
 type Model = Error | {
@@ -16,8 +16,9 @@ export class FacebookLoginController {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
     try {
-      if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
-        return badRequest(new RequiredFieldError('token'))
+      const error = this.validate(httpRequest)
+      if (error !== undefined) {
+        return badRequest(error)
       }
       const accessToken = await this.facebookAuth.perform({ token: httpRequest.token })
       if (accessToken instanceof AccessToken) {
@@ -28,6 +29,12 @@ export class FacebookLoginController {
       return unauthorized()
     } catch (error: any) {
       return serverError(error)
+    }
+  }
+
+  private validate (httpRequest: HttpRequest): Error | undefined {
+    if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
+      return new RequiredFieldError('token')
     }
   }
 }
