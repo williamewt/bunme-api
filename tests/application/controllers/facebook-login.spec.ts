@@ -3,58 +3,52 @@ import { FacebookAuthentication } from '@/domain/features'
 import { AccessToken } from '@/domain/models'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@/application/controllers'
-import { RequiredFieldError, ServerError, UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
+import { RequiredStringValidation } from '@/application/validation'
+
+jest.mock('@/application/validation/required-string')
 
 describe('FacebookLoginController', () => {
   let facebookAuth: MockProxy<FacebookAuthentication>
   let sut: FacebookLoginController
+  let token: string
 
   beforeAll(() => {
     facebookAuth = mock()
     facebookAuth.perform.mockResolvedValue(new AccessToken('any_value'))
+    token = 'any_token'
   })
 
   beforeEach(() => {
     sut = new FacebookLoginController(facebookAuth)
   })
 
-  it('should return 400 if token is empty', async () => {
-    const httpResponse = await sut.handle({ token: '' })
+  it('should return 400 if validation fails', async () => {
+    const error = new Error('validation_error')
+    const RequiredStringValidationSpy = jest.fn().mockImplementationOnce(() => ({
+      validate: jest.fn().mockReturnValueOnce(error)
+    }))
+    jest.mocked(RequiredStringValidation).mockImplementationOnce(RequiredStringValidationSpy)
 
+    const httpResponse = await sut.handle({ token })
+
+    expect(RequiredStringValidation).toHaveBeenCalledWith('any_token', 'token')
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new RequiredFieldError('token')
-    })
-  })
-
-  it('should return 400 if token is null', async () => {
-    const httpResponse = await sut.handle({ token: null as any })
-
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: new RequiredFieldError('token')
-    })
-  })
-
-  it('should return 400 if token is undefined', async () => {
-    const httpResponse = await sut.handle({ token: undefined as any })
-
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: new Error('The field token is required')
+      data: error
     })
   })
 
   it('should call FacebookAuthentication with correct params', async () => {
     await sut.handle({ token: 'any_token' })
 
-    expect(facebookAuth.perform).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(facebookAuth.perform).toHaveBeenCalledWith({ token })
     expect(facebookAuth.perform).toHaveBeenCalledTimes(1)
   })
 
   it('should return 401 if authentication error', async () => {
     facebookAuth.perform.mockResolvedValueOnce(new AuthenticationError())
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual({
       statusCode: 401,
@@ -63,7 +57,7 @@ describe('FacebookLoginController', () => {
   })
 
   it('should return 200 if authentication success', async () => {
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual({
       statusCode: 200,
@@ -76,7 +70,7 @@ describe('FacebookLoginController', () => {
   it('should return 500 if authentication throw', async () => {
     const error = new Error('infra_error')
     facebookAuth.perform.mockRejectedValueOnce(error)
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual({
       statusCode: 500,
