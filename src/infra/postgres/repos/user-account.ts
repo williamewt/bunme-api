@@ -1,5 +1,5 @@
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
-import { prisma } from '@/main/database'
+import { PrismaClient } from '@prisma/client'
 
 type LoadParams = LoadUserAccountRepository.Params
 type LoadResult = LoadUserAccountRepository.Result
@@ -7,10 +7,12 @@ type SaveFacebookParams = SaveFacebookAccountRepository.Params
 type SaveFacebookResult = SaveFacebookAccountRepository.Result
 
 export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
-  async load (params: LoadParams): Promise<LoadResult> {
-    const pgUser = await prisma.user.findUnique({
+  constructor (private readonly client: PrismaClient) {}
+
+  async load ({ email }: LoadParams): Promise<LoadResult> {
+    const pgUser = await this.client.user.findUnique({
       where: {
-        email: params.email
+        email: email
       },
       select: {
         id: true,
@@ -25,29 +27,20 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveF
     }
   }
 
-  async saveWithFacebook (params: SaveFacebookParams): Promise<SaveFacebookResult> {
-    let id: string
-    if (params.id === undefined) {
-      const pgUser = await prisma.user.create({
-        data: {
-          name: params.name,
-          email: params.email,
-          facebookId: params.facebookId
-        }
+  async saveWithFacebook ({ id, name, email, facebookId }: SaveFacebookParams): Promise<SaveFacebookResult> {
+    let resultId: string
+    if (id === undefined) {
+      const pgUser = await this.client.user.create({
+        data: { name, email, facebookId }
       })
-      id = pgUser.id.toString()
+      resultId = pgUser.id.toString()
     } else {
-      id = params.id
-      await prisma.user.update({
-        where: {
-          id: BigInt(id)
-        },
-        data: {
-          name: params.name,
-          facebookId: params.facebookId
-        }
+      resultId = id
+      await this.client.user.update({
+        where: { id: parseInt(id) },
+        data: { name, facebookId }
       })
     }
-    return { id }
+    return { id: resultId }
   }
 }

@@ -1,25 +1,23 @@
-import { User } from '@/domain/models'
-import { PgUserAccountRepositoryInMemmory } from '@/tests/infra/postgres/in_memmory'
+import { PgUserAccountRepository } from '@/infra/postgres/repos'
+import { PrismaClient } from '@prisma/client'
+import createPrismaMock from 'prisma-mock'
 
-describe('PgUserAccountRepositoryInMemmory', () => {
-  let sut: PgUserAccountRepositoryInMemmory
-  let userData: User
+describe('PgUserAccountRepository', () => {
+  let sut: PgUserAccountRepository
+  let client: PrismaClient
 
-  beforeAll(() => {
-    userData = {
-      id: 1n,
-      email: 'existing_email'
-    }
-  })
-
-  beforeEach(() => {
-    sut = new PgUserAccountRepositoryInMemmory()
-    sut.items = []
+  beforeEach(async () => {
+    client = await createPrismaMock()
+    sut = new PgUserAccountRepository(client)
   })
 
   describe('load', () => {
     it('should return a account id if email exists', async () => {
-      sut.items.push(userData)
+      await client.user.create({
+        data: {
+          email: 'existing_email'
+        }
+      })
 
       const account = await sut.load({ email: 'existing_email' })
 
@@ -27,11 +25,15 @@ describe('PgUserAccountRepositoryInMemmory', () => {
     })
 
     it('should return undefined if email not exists', async () => {
-      sut.items.push(userData)
+      await client.user.create({
+        data: {
+          email: 'existing_email'
+        }
+      })
 
       const account = await sut.load({ email: 'not_existing_email' })
 
-      expect(account).toEqual(undefined)
+      expect(account).toBeUndefined()
     })
   })
 
@@ -57,16 +59,26 @@ describe('PgUserAccountRepositoryInMemmory', () => {
       })
 
       await sut.saveWithFacebook({
-        id: '1',
+        id: id,
         name: 'new_name',
         email: 'new_email',
         facebookId: 'new_fb_id'
       })
 
-      const pgUser = sut.items.find(user => user.id === 1n)
+      const pgUser = await client.user.findUnique({
+        where: {
+          id: 1
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          facebookId: true
+        }
+      })
 
       expect(pgUser).toEqual({
-        id: 1n,
+        id: 1,
         name: 'new_name',
         email: 'any_email',
         facebookId: 'new_fb_id'
