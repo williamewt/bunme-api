@@ -6,9 +6,17 @@ import { UnauthorizedError } from '@/application/errors'
 describe('Login Routes', () => {
   describe('Post /login/facebook', () => {
     const loadUserSpy = jest.fn()
+    const saveWithFacebookSpy = jest.fn()
 
     jest.mock('@/infra/apis/facebook', () => ({
       FacebookApi: jest.fn().mockReturnValue({ loadUser: loadUserSpy })
+    }))
+
+    jest.mock('@/infra/postgres/repos/user-account', () => ({
+      PgUserAccountRepository: jest.fn().mockReturnValue({
+        load: jest.fn().mockResolvedValue(undefined),
+        saveWithFacebook: saveWithFacebookSpy
+      })
     }))
 
     it('should return 200 with AccessToken', async () => {
@@ -17,6 +25,8 @@ describe('Login Routes', () => {
         name: 'any_name',
         email: 'any_email'
       })
+
+      saveWithFacebookSpy.mockResolvedValueOnce({ id: '1' })
 
       const { status, body } = await request(app)
         .post('/api/login/facebook')
