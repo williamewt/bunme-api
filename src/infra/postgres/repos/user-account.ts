@@ -1,15 +1,15 @@
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/domain/contracts/repos'
 import { PrismaClient } from '@prisma/client'
 
-type LoadParams = LoadUserAccountRepository.Params
-type LoadResult = LoadUserAccountRepository.Result
-type SaveFacebookParams = SaveFacebookAccountRepository.Params
-type SaveFacebookResult = SaveFacebookAccountRepository.Result
+type LoadInput = LoadUserAccountRepository.Input
+type LoadOutput = LoadUserAccountRepository.Output
+type SaveFacebookInput = SaveFacebookAccountRepository.Input
+type SaveFacebookOutput = SaveFacebookAccountRepository.Output
 
 export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
   constructor (private readonly client: PrismaClient) {}
 
-  async load ({ email }: LoadParams): Promise<LoadResult> {
+  async load ({ email }: LoadInput): Promise<LoadOutput> {
     const pgUser = await this.client.user.findUnique({
       where: {
         email: email
@@ -27,7 +27,7 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveF
     }
   }
 
-  async saveWithFacebook ({ id, name, email, facebookId }: SaveFacebookParams): Promise<SaveFacebookResult> {
+  async saveWithFacebook ({ id, name, email, facebookId }: SaveFacebookInput): Promise<SaveFacebookOutput> {
     let resultId: string
     if (id === undefined) {
       const pgUser = await this.client.user.create({

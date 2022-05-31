@@ -81,9 +81,9 @@ describe('FacebookAuthentication', () => {
   })
 
   it('Should returns AccessToken on Success', async () => {
-    const authResult = await sut({ token })
+    const authOutput = await sut({ token })
 
-    expect(authResult).toEqual({ accessToken: 'any_generated_token' })
+    expect(authOutput).toEqual({ accessToken: 'any_generated_token' })
     expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 
