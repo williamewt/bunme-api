@@ -1,8 +1,8 @@
 import { ForbiddenError } from '@/application/errors'
-import { AuthorizationMiddleware } from '@/application/middlewares'
+import { AuthenticationMiddleware } from '@/application/middlewares'
 
 describe('AuthenticationMiddleware', () => {
-  let sut: AuthorizationMiddleware
+  let sut: AuthenticationMiddleware
   let authorize: jest.Mock
   let authorization: string
 
@@ -12,7 +12,7 @@ describe('AuthenticationMiddleware', () => {
   })
 
   beforeEach(() => {
-    sut = new AuthorizationMiddleware(authorize)
+    sut = new AuthenticationMiddleware(authorize)
   })
 
   it('should return 403 if authorization is empty', async () => {
