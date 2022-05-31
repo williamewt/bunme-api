@@ -6,33 +6,34 @@ jest.mock('jsonwebtoken')
 describe('JwtTokenHandler', () => {
   let sut: JwtTokenHandler
   let fakeJwt: jest.Mocked<typeof jwt>
+  let secret: string
 
   beforeAll(() => {
     fakeJwt = jwt as jest.Mocked<typeof jwt>
+    secret = 'any_secret'
   })
 
   beforeEach(() => {
-    sut = new JwtTokenHandler('any_secret')
+    sut = new JwtTokenHandler(secret)
   })
 
   describe('generateToken', () => {
     let key: string
     let expirationInMs: number
     let token: string
-    let secret: string
 
     beforeAll(() => {
       key = 'any_key'
       expirationInMs = 1000
       token = 'any_token'
-      secret = 'any_secret'
       fakeJwt.sign.mockImplementation(() => token)
     })
 
     it('should call sign with correct params', async () => {
-      await sut.generateToken({ key: 'any_key', expirationInMs })
+      await sut.generateToken({ key, expirationInMs })
 
       expect(fakeJwt.sign).toHaveBeenCalledWith({ key }, secret, { expiresIn: 1 })
+      expect(fakeJwt.sign).toHaveBeenCalledTimes(1)
     })
 
     it('should return a token', async () => {
@@ -47,6 +48,28 @@ describe('JwtTokenHandler', () => {
       const promise = sut.generateToken({ key, expirationInMs })
 
       await expect(promise).rejects.toThrow(new Error('token_error'))
+    })
+  })
+
+  describe('validateToken', () => {
+    let token: string
+
+    beforeAll(() => {
+      token = 'any_token'
+    })
+
+    it('should call verify with correct params', async () => {
+      await sut.validateToken({ token })
+
+      expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret)
+      expect(fakeJwt.verify).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call verify with correct params', async () => {
+      await sut.validateToken({ token })
+
+      expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret)
+      expect(fakeJwt.verify).toHaveBeenCalledTimes(1)
     })
   })
 })
