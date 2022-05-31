@@ -9,30 +9,44 @@ describe('JwtTokenHandler', () => {
 
   beforeAll(() => {
     fakeJwt = jwt as jest.Mocked<typeof jwt>
-    fakeJwt.sign.mockImplementation(() => 'any_token')
   })
 
   beforeEach(() => {
     sut = new JwtTokenHandler('any_secret')
   })
 
-  it('should call sign with correct params', async () => {
-    await sut.generateToken({ key: 'any_key', expirationInMs: 1000 })
+  describe('generateToken', () => {
+    let key: string
+    let expirationInMs: number
+    let token: string
+    let secret: string
 
-    expect(fakeJwt.sign).toHaveBeenCalledWith({ key: 'any_key' }, 'any_secret', { expiresIn: 1 })
-  })
+    beforeAll(() => {
+      key = 'any_key'
+      expirationInMs = 1000
+      token = 'any_token'
+      secret = 'any_secret'
+      fakeJwt.sign.mockImplementation(() => token)
+    })
 
-  it('should return a token', async () => {
-    const token = await sut.generateToken({ key: 'any_key', expirationInMs: 1000 })
+    it('should call sign with correct params', async () => {
+      await sut.generateToken({ key: 'any_key', expirationInMs })
 
-    expect(token).toBe('any_token')
-  })
+      expect(fakeJwt.sign).toHaveBeenCalledWith({ key }, secret, { expiresIn: 1 })
+    })
 
-  it('should rethrow if get throws', async () => {
-    fakeJwt.sign.mockImplementationOnce(() => { throw new Error('token_error') })
+    it('should return a token', async () => {
+      const generatedToken = await sut.generateToken({ key, expirationInMs })
 
-    const promise = sut.generateToken({ key: 'any_key', expirationInMs: 1000 })
+      expect(generatedToken).toBe(token)
+    })
 
-    await expect(promise).rejects.toThrow(new Error('token_error'))
+    it('should rethrow if get throws', async () => {
+      fakeJwt.sign.mockImplementationOnce(() => { throw new Error('token_error') })
+
+      const promise = sut.generateToken({ key, expirationInMs })
+
+      await expect(promise).rejects.toThrow(new Error('token_error'))
+    })
   })
 })
