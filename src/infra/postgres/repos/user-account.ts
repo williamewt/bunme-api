@@ -1,4 +1,4 @@
-import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/data/contracts/repos'
+import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/domain/contracts/repos'
 import { PrismaClient } from '@prisma/client'
 
 type LoadParams = LoadUserAccountRepository.Params
