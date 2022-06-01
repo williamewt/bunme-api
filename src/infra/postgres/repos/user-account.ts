@@ -1,12 +1,12 @@
-import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/domain/contracts/repos'
+import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repos'
 import { PrismaClient } from '@prisma/client'
 
-type LoadInput = LoadUserAccountRepository.Input
-type LoadOutput = LoadUserAccountRepository.Output
-type SaveFacebookInput = SaveFacebookAccountRepository.Input
-type SaveFacebookOutput = SaveFacebookAccountRepository.Output
+type LoadInput = LoadUserAccount.Input
+type LoadOutput = LoadUserAccount.Output
+type SaveFacebookInput = SaveFacebookAccount.Input
+type SaveFacebookOutput = SaveFacebookAccount.Output
 
-export class PgUserAccountRepository implements LoadUserAccountRepository, SaveFacebookAccountRepository {
+export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAccount {
   constructor (private readonly client: PrismaClient) {}
 
   async load ({ email }: LoadInput): Promise<LoadOutput> {
