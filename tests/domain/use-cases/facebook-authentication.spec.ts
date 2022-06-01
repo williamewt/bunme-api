@@ -1,7 +1,7 @@
 import { AuthenticationError } from '@/domain/entities/errors'
 import { LoadFacebookUser, TokenGenerator } from '@/domain/contracts/gateways'
 import { setupFacebookAuthentication, FacebookAuthentication } from '@/domain/use-cases'
-import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repos'
+import { LoadUserAccount, SaveUserAccount } from '@/domain/contracts/repos'
 import { AccessToken, FacebookAccount } from '@/domain/entities'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -11,7 +11,7 @@ jest.mock('@/domain/entities/facebook-account')
 describe('FacebookAuthentication', () => {
   let facebook: MockProxy<LoadFacebookUser>
   let crypto: MockProxy<TokenGenerator>
-  let userAccountRepo: MockProxy<LoadUserAccount & SaveFacebookAccount>
+  let userAccountRepo: MockProxy<LoadUserAccount & SaveUserAccount>
   let sut: FacebookAuthentication
   let token: string
 

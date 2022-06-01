@@ -1,11 +1,11 @@
 import { LoadFacebookUser, TokenGenerator } from '@/domain/contracts/gateways'
 import { AuthenticationError } from '@/domain/entities/errors'
-import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repos'
+import { LoadUserAccount, SaveUserAccount } from '@/domain/contracts/repos'
 import { AccessToken, FacebookAccount } from '@/domain/entities'
 
 type Setup = (
   facebook: LoadFacebookUser,
-  userAccountRepo: LoadUserAccount & SaveFacebookAccount,
+  userAccountRepo: LoadUserAccount & SaveUserAccount,
   token: TokenGenerator
 ) => FacebookAuthentication
 

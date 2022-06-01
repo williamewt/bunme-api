@@ -1,12 +1,12 @@
-import { LoadUserAccount, SaveFacebookAccount } from '@/domain/contracts/repos'
+import { LoadUserAccount, SaveUserAccount } from '@/domain/contracts/repos'
 import { PrismaClient } from '@prisma/client'
 
 type LoadInput = LoadUserAccount.Input
 type LoadOutput = LoadUserAccount.Output
-type SaveFacebookInput = SaveFacebookAccount.Input
-type SaveFacebookOutput = SaveFacebookAccount.Output
+type SaveUserInput = SaveUserAccount.Input
+type SaveUserOutput = SaveUserAccount.Output
 
-export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAccount {
+export class PgUserAccountRepository implements LoadUserAccount, SaveUserAccount {
   constructor (private readonly client: PrismaClient) {}
 
   async load ({ email }: LoadInput): Promise<LoadOutput> {
@@ -27,7 +27,7 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAcc
     }
   }
 
-  async saveWithFacebook ({ id, name, email, facebookId }: SaveFacebookInput): Promise<SaveFacebookOutput> {
+  async saveWithFacebook ({ id, name, email, facebookId }: SaveUserInput): Promise<SaveUserOutput> {
     let resultId: string
     if (id === undefined) {
       const pgUser = await this.client.user.create({
@@ -39,6 +39,23 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveFacebookAcc
       await this.client.user.update({
         where: { id: parseInt(id) },
         data: { name, facebookId }
+      })
+    }
+    return { id: resultId }
+  }
+
+  async saveWithGoogle ({ id, name, email, googleId }: SaveUserInput): Promise<SaveUserOutput> {
+    let resultId: string
+    if (id === undefined) {
+      const pgUser = await this.client.user.create({
+        data: { name, email, googleId }
+      })
+      resultId = pgUser.id.toString()
+    } else {
+      resultId = id
+      await this.client.user.update({
+        where: { id: parseInt(id) },
+        data: { name, googleId }
       })
     }
     return { id: resultId }
