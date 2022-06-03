@@ -12,6 +12,9 @@ export const env = {
     redirectUri: process.env.GOOGLE_REDIRECT_URI ?? '',
     codeTest: process.env.GOOGLE_CODE_TEST ?? ''
   },
+  microsoftApi: {
+    tokenTest: process.env.MICROSOFT_TOKEN_TEST ?? ''
+  },
   port: process.env.PORT ?? 8080,
   jwtSecret: process.env.JWT_SECRET ?? ''
 }

@@ -6,11 +6,13 @@ import { UnauthorizedError } from '@/application/errors'
 describe('Login Routes', () => {
   const saveWithFacebookSpy = jest.fn()
   const saveWithGoogleSpy = jest.fn()
+  const saveWithMicrosoftSpy = jest.fn()
   jest.mock('@/infra/postgres/repos/user-account', () => ({
     PgUserAccountRepository: jest.fn().mockReturnValue({
       load: jest.fn().mockResolvedValue(undefined),
       saveWithFacebook: saveWithFacebookSpy,
-      saveWithGoogle: saveWithGoogleSpy
+      saveWithGoogle: saveWithGoogleSpy,
+      saveWithMicrosoft: saveWithMicrosoftSpy
     })
   }))
 
@@ -76,6 +78,40 @@ describe('Login Routes', () => {
       const { status, body } = await request(app)
         .post('/api/login/google')
         .send({ code: 'invalid_code' })
+
+      expect(status).toBe(401)
+      expect(body.error).toBe(new UnauthorizedError().message)
+    })
+  })
+
+  describe('Post /login/microsoft', () => {
+    const loadUserMicrosoftSpy = jest.fn()
+
+    jest.mock('@/infra/apis/microsoft', () => ({
+      MicrosoftApi: jest.fn().mockReturnValue({ loadUser: loadUserMicrosoftSpy })
+    }))
+
+    it('should return 200 with AccessToken', async () => {
+      loadUserMicrosoftSpy.mockResolvedValueOnce({
+        microsoftId: 'any_id',
+        name: 'any_name',
+        email: 'any_email'
+      })
+
+      saveWithMicrosoftSpy.mockResolvedValueOnce({ id: '1' })
+
+      const { status, body } = await request(app)
+        .post('/api/login/microsoft')
+        .send({ token: 'valid_token' })
+
+      expect(status).toBe(200)
+      expect(body.accessToken).toBeDefined()
+    })
+
+    it('should return 401 with UnauthorizedError', async () => {
+      const { status, body } = await request(app)
+        .post('/api/login/microsoft')
+        .send({ token: 'invalid_token' })
 
       expect(status).toBe(401)
       expect(body.error).toBe(new UnauthorizedError().message)

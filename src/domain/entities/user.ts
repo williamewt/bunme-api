@@ -6,6 +6,7 @@ export type User = {
   password?: string | null
   facebookId?: string | null
   googleId?: string | null
+  microsoftId?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
 }

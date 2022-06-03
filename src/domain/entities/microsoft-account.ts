@@ -1,24 +1,24 @@
 import { AccountData } from '@/domain/entities'
 
-type FacebookData = {
+type MicrosoftData = {
   name: string
   email: string
-  facebookId: string
+  microsoftId: string
 }
 
-export class FacebookAccount {
+export class MicrosoftAccount {
   id?: string
   name: string
   email: string
-  facebookId: string
+  microsoftId: string
   createdAt?: Date
   updatedAt?: Date
 
-  constructor (fbData: FacebookData, accountData?: AccountData) {
+  constructor (gData: MicrosoftData, accountData?: AccountData) {
     this.id = accountData?.id
-    this.name = accountData?.name ?? fbData.name
-    this.email = fbData.email
-    this.facebookId = fbData.facebookId
+    this.name = accountData?.name ?? gData.name
+    this.email = gData.email
+    this.microsoftId = gData.microsoftId
     this.createdAt = accountData?.createdAt
     this.updatedAt = accountData?.updatedAt
   }

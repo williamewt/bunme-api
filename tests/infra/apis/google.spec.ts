@@ -44,10 +44,12 @@ describe('GoogleApi', () => {
 
     expect(httpClient.get).toHaveBeenCalledWith({
       url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-      params: {
-        alt: 'json',
-        fields: ['id', 'name', 'email'].join(','),
-        access_token: 'any_app_token'
+      config: {
+        params: {
+          alt: 'json',
+          fields: ['id', 'name', 'email'].join(','),
+          access_token: 'any_app_token'
+        }
       }
     })
   })

@@ -1,15 +1,11 @@
+import { AccountData } from '@/domain/entities'
+
 type GoogleData = {
   name: string
   email: string
   googleId: string
 }
 
-type AccountData = {
-  id?: string
-  name?: string
-  createdAt?: Date
-  updatedAt?: Date
-}
 export class GoogleAccount {
   id?: string
   name: string

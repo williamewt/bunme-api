@@ -17,6 +17,7 @@ model User  {
   homemadeMeasures HomemadeMeasures[]
   facebookId      String?       @db.VarChar(255)
   googleId        String?       @db.VarChar(255)
+  microsoftId     String?       @db.VarChar(255)
   createdAt       DateTime?     @default(now()) @db.Timestamp(6)
   updatedAt       DateTime?     @updatedAt
 

@@ -60,4 +60,21 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveUserAccount
     }
     return { id: resultId }
   }
+
+  async saveWithMicrosoft ({ id, name, email, microsoftId }: SaveUserInput): Promise<SaveUserOutput> {
+    let resultId: string
+    if (id === undefined) {
+      const pgUser = await this.client.user.create({
+        data: { name, email, microsoftId }
+      })
+      resultId = pgUser.id.toString()
+    } else {
+      resultId = id
+      await this.client.user.update({
+        where: { id: parseInt(id) },
+        data: { name, microsoftId }
+      })
+    }
+    return { id: resultId }
+  }
 }

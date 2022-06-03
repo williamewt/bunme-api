@@ -17,6 +17,7 @@ type SetupSave = (params: SaveUserAccount.Input) => Promise<SaveUserAccount.Outp
 export interface SaveUserAccount {
   saveWithFacebook: SetupSave
   saveWithGoogle: SetupSave
+  saveWithMicrosoft: SetupSave
 }
 
 export namespace SaveUserAccount {
@@ -24,10 +25,11 @@ export namespace SaveUserAccount {
     id?: string
     name: string
     email: string
-    facebookId?: string
     cellphone?: string
     password?: string
+    facebookId?: string
     googleId?: string
+    microsoftId?: string
     createdAt?: Date
     updatedAt?: Date
   }
