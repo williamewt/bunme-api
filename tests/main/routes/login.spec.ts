@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import request from 'supertest'
 
 import { app } from '@/main/config/app'
@@ -15,6 +16,7 @@ describe('Login Routes', () => {
     jest.mock('@/infra/postgres/repos/user-account', () => ({
       PgUserAccountRepository: jest.fn().mockReturnValue({
         load: jest.fn().mockResolvedValue(undefined),
+        saveWithGoogle: jest.fn().mockResolvedValue(undefined),
         saveWithFacebook: saveWithFacebookSpy
       })
     }))
