@@ -15,7 +15,8 @@
     "test:watch": "yarn test -- --watch",
     "test:staged": "yarn test -- --findRelatedTests",
     "test:coverage": "yarn test -- --coverage",
-    "test:fb-api": "yarn test -- -c ./jest.integration.config.js ./tests/external/facebook-api.test.ts"
+    "test:fb-api": "yarn test -- -c ./jest.integration.config.js ./tests/external/facebook-api.test.ts",
+    "test:google-api": "yarn test -- -c ./jest.integration.config.js ./tests/external/google-api.test.ts"
   },
   "keywords": [],
   "author": "",

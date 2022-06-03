@@ -1,4 +1,4 @@
-import 'dotenv/config'
+
 import { FacebookApi } from '@/infra/apis'
 import { AxiosHttpClient } from '@/infra/http'
 import { env } from '@/main/config/env'
@@ -17,7 +17,7 @@ describe('Facebook Api Integration Tests', () => {
   })
 
   it('should return a Facebook user is token is valid', async () => {
-    const fbUser = await sut.loadUser({ token: 'EAANrzEke38IBAGRGTsZCq6cU7HvwHBi81PBH6hJLhVwCtNwKHZBUkxynDKp1KAl0OPUqdRfdWvE0tI9L4tX9ZC3LbFiayNEABkgCAjPpf76baHrh0ZBS8p8lYnTUpCAbCKgR5hDomWqgloykQIQa20MiMCruvakcTaCZBYH6d3A7Mdkh3ByjG5nd8DUtuCc1ZB7VaLCn7V2gZDZD' })
+    const fbUser = await sut.loadUser({ token: env.facebookApi.tokenTest })
 
     expect(fbUser).toEqual({
       facebookId: '100336172709758',
