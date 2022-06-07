@@ -41,6 +41,13 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class InvalidCredentialsError extends Error {
+  constructor () {
+    super('Invalid credentials')
+    this.name = 'InvalidCredentialsError'
+  }
+}
+
 export class ForbiddenError extends Error {
   constructor () {
     super('Access denied')

@@ -21,6 +21,7 @@ describe('RegisterUserAccount', () => {
     userAccountRepo.save.mockResolvedValue({ id: 'any_id' })
     hasher.hash.mockResolvedValue('any_hash')
     token = mock()
+    token.generate.mockResolvedValue('any_token')
     userData = {
       name: 'any_name',
       email: 'any_email',
@@ -61,6 +62,13 @@ describe('RegisterUserAccount', () => {
     await sut(userData)
 
     expect(token.generate).toHaveBeenCalledWith({ key: 'any_id', expirationInMs: AccessToken.expirationInMs })
+    expect(token.generate).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should returns AccessToken on Success', async () => {
+    const authOutput = await sut(userData)
+
+    expect(authOutput).toEqual({ accessToken: 'any_token' })
     expect(token.generate).toHaveBeenCalledTimes(1)
   })
 

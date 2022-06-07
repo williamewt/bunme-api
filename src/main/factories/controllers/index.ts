@@ -1,4 +1,5 @@
 export * from './register'
+export * from './login'
 export * from './facebook-login'
 export * from './google-login'
 export * from './microsoft-login'

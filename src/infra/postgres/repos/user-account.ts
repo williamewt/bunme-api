@@ -1,28 +1,30 @@
-import { LoadUserAccount, SaveUserAccount } from '@/domain/contracts/repos'
+import { LoadUserAccountByEmail, SaveUserAccount } from '@/domain/contracts/repos'
 import { PrismaClient } from '@prisma/client'
 
-type LoadInput = LoadUserAccount.Input
-type LoadOutput = LoadUserAccount.Output
+type LoadInput = LoadUserAccountByEmail.Input
+type LoadOutput = LoadUserAccountByEmail.Output
 type SaveUserInput = SaveUserAccount.Input
 type SaveUserOutput = SaveUserAccount.Output
 
-export class PgUserAccountRepository implements LoadUserAccount, SaveUserAccount {
+export class PgUserAccountRepository implements LoadUserAccountByEmail, SaveUserAccount {
   constructor (private readonly client: PrismaClient) {}
 
-  async load ({ email }: LoadInput): Promise<LoadOutput> {
+  async loadByEmail ({ email }: LoadInput): Promise<LoadOutput> {
     const pgUser = await this.client.user.findUnique({
       where: {
         email: email
       },
       select: {
         id: true,
-        name: true
+        name: true,
+        password: true
       }
     })
     if (pgUser !== null) {
       return {
         id: pgUser.id.toString(),
-        name: pgUser.name ?? undefined
+        name: pgUser.name ?? undefined,
+        password: pgUser.password ?? undefined
       }
     }
   }

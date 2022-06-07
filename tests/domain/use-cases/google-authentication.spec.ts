@@ -1,6 +1,6 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import { AuthenticationError } from '@/domain/entities/errors'
-import { LoadUserAccount, SaveUserAccount } from '@/domain/contracts/repos'
+import { LoadUserAccountByEmail, SaveUserAccount } from '@/domain/contracts/repos'
 import { GoogleAccount, AccessToken } from '@/domain/entities'
 import { LoadGoogleUser, TokenGenerator } from '@/domain/contracts/gateways'
 import { GoogleAuthentication, setupGoogleAuthentication } from '@/domain/use-cases'
@@ -9,7 +9,7 @@ jest.mock('@/domain/entities/google-account')
 
 describe('GoogleAuthentication', () => {
   let google: MockProxy<LoadGoogleUser>
-  let userAccountRepo: MockProxy<LoadUserAccount & SaveUserAccount>
+  let userAccountRepo: MockProxy<LoadUserAccountByEmail & SaveUserAccount>
   let code: string
   let sut: GoogleAuthentication
   let crypto: MockProxy<TokenGenerator>
@@ -23,7 +23,7 @@ describe('GoogleAuthentication', () => {
       googleId: 'any_g_id'
     })
     userAccountRepo = mock()
-    userAccountRepo.load.mockResolvedValue(undefined)
+    userAccountRepo.loadByEmail.mockResolvedValue(undefined)
     userAccountRepo.saveWithGoogle.mockResolvedValue({ id: 'any_account_id' })
     crypto = mock()
     crypto.generate.mockResolvedValue('any_generated_token')
@@ -55,8 +55,8 @@ describe('GoogleAuthentication', () => {
   it('Should call LoadUserAccountRepo when LoadGoogleUser returns data', async () => {
     await sut({ code })
 
-    expect(userAccountRepo.load).toHaveBeenCalledWith({ email: 'any_g_email' })
-    expect(userAccountRepo.load).toHaveBeenCalledTimes(1)
+    expect(userAccountRepo.loadByEmail).toHaveBeenCalledWith({ email: 'any_g_email' })
+    expect(userAccountRepo.loadByEmail).toHaveBeenCalledTimes(1)
   })
 
   it('Should call SaveUserAccount with GoogleAccount', async () => {
@@ -86,8 +86,8 @@ describe('GoogleAuthentication', () => {
     await expect(promise).rejects.toThrow(new Error('fb_error'))
   })
 
-  it('Should rethrow if LoadUserAccount throws', async () => {
-    userAccountRepo.load.mockRejectedValueOnce(new Error('load_error'))
+  it('Should rethrow if LoadUserAccountByEmail throws', async () => {
+    userAccountRepo.loadByEmail.mockRejectedValueOnce(new Error('load_error'))
 
     const promise = sut({ code })
 

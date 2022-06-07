@@ -19,7 +19,7 @@ describe('PgUserAccountRepository', () => {
         }
       })
 
-      const account = await sut.load({ email: 'existing_email' })
+      const account = await sut.loadByEmail({ email: 'existing_email' })
 
       expect(account).toEqual({ id: '1' })
     })
@@ -31,7 +31,7 @@ describe('PgUserAccountRepository', () => {
         }
       })
 
-      const account = await sut.load({ email: 'not_existing_email' })
+      const account = await sut.loadByEmail({ email: 'not_existing_email' })
 
       expect(account).toBeUndefined()
     })
@@ -45,7 +45,7 @@ describe('PgUserAccountRepository', () => {
         facebookId: 'any_fb_id'
       })
 
-      const pgUser = await sut.load({ email: 'any_email' })
+      const pgUser = await sut.loadByEmail({ email: 'any_email' })
 
       expect(pgUser?.id).toBe('1')
       expect(id).toBe('1')
@@ -95,7 +95,7 @@ describe('PgUserAccountRepository', () => {
         googleId: 'any_g_id'
       })
 
-      const pgUser = await sut.load({ email: 'any_email' })
+      const pgUser = await sut.loadByEmail({ email: 'any_email' })
 
       expect(pgUser?.id).toBe('1')
       expect(id).toBe('1')
@@ -145,7 +145,7 @@ describe('PgUserAccountRepository', () => {
         microsoftId: 'any_m_id'
       })
 
-      const pgUser = await sut.load({ email: 'any_email' })
+      const pgUser = await sut.loadByEmail({ email: 'any_email' })
 
       expect(pgUser?.id).toBe('1')
       expect(id).toBe('1')
@@ -195,7 +195,7 @@ describe('PgUserAccountRepository', () => {
         password: 'any_password'
       })
 
-      const pgUser = await sut.load({ email: 'any_email' })
+      const pgUser = await sut.loadByEmail({ email: 'any_email' })
 
       expect(pgUser?.id).toBe('1')
       expect(id).toBe('1')

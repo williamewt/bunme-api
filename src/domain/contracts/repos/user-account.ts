@@ -1,8 +1,8 @@
-export interface LoadUserAccount {
-  load: (params: LoadUserAccount.Input) => Promise<LoadUserAccount.Output>
+export interface LoadUserAccountByEmail {
+  loadByEmail: (params: LoadUserAccountByEmail.Input) => Promise<LoadUserAccountByEmail.Output>
 }
 
-export namespace LoadUserAccount {
+export namespace LoadUserAccountByEmail {
   export type Input = {
     email: string
   }
@@ -10,6 +10,7 @@ export namespace LoadUserAccount {
   export type Output = undefined | {
     id: string
     name?: string
+    password?: string
   }
 }
 
