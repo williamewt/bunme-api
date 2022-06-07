@@ -1,10 +1,11 @@
-import { TokenGenerator } from '@/domain/contracts/gateways'
+import { Hasher, TokenGenerator } from '@/domain/contracts/gateways'
 import { CheckDuplicateFields, SaveUserAccount } from '@/domain/contracts/repos'
 import { AccessToken } from '@/domain/entities'
 
 type Setup = (
   checkDuplicateFieldRepo: CheckDuplicateFields,
   userAccountRepo: SaveUserAccount,
+  hasher: Hasher,
   token: TokenGenerator
 ) => RegisterUserAccount
 
@@ -13,10 +14,11 @@ type Output = { accessToken: string } | undefined
 
 export type RegisterUserAccount = (params: Input) => Promise<Output>
 
-export const setupRegisterUserAccount: Setup = (checkDuplicateFieldRepo, userAccountRepo, token) => async params => {
+export const setupRegisterUserAccount: Setup = (checkDuplicateFieldRepo, userAccountRepo, hasher, token) => async params => {
   const userExists = await checkDuplicateFieldRepo.load({ table: 'user', fieldName: 'email', value: params.email })
   if (!userExists) {
-    const { id } = await userAccountRepo.save(params)
+    const hashedPassword = await hasher.hash({ plaintext: params.password })
+    const { id } = await userAccountRepo.save({ ...params, password: hashedPassword })
     const accessToken = await token.generate({ key: id, expirationInMs: AccessToken.expirationInMs })
     return { accessToken }
   }

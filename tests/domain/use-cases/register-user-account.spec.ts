@@ -1,5 +1,5 @@
 import { CheckDuplicateFields, SaveUserAccount } from '@/domain/contracts/repos'
-import { TokenGenerator } from '@/domain/contracts/gateways'
+import { TokenGenerator, Hasher } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -9,6 +9,7 @@ describe('RegisterUserAccount', () => {
   let sut: RegisterUserAccount
   let checkDuplicateFieldRepo: MockProxy<CheckDuplicateFields>
   let userAccountRepo: MockProxy<SaveUserAccount>
+  let hasher: MockProxy<Hasher>
   let token: MockProxy<TokenGenerator>
   let userData: { name: string, email: string, password: string }
 
@@ -16,7 +17,9 @@ describe('RegisterUserAccount', () => {
     checkDuplicateFieldRepo = mock()
     checkDuplicateFieldRepo.load.mockResolvedValue(false)
     userAccountRepo = mock()
+    hasher = mock()
     userAccountRepo.save.mockResolvedValue({ id: 'any_id' })
+    hasher.hash.mockResolvedValue('any_hash')
     token = mock()
     userData = {
       name: 'any_name',
@@ -26,7 +29,7 @@ describe('RegisterUserAccount', () => {
   })
 
   beforeEach(() => {
-    sut = setupRegisterUserAccount(checkDuplicateFieldRepo, userAccountRepo, token)
+    sut = setupRegisterUserAccount(checkDuplicateFieldRepo, userAccountRepo, hasher, token)
   })
 
   it('should calls checkDuplicateFieldRepo.load with correct params', async () => {
@@ -40,10 +43,17 @@ describe('RegisterUserAccount', () => {
     expect(checkDuplicateFieldRepo.load).toHaveBeenCalledTimes(1)
   })
 
+  it('should calls hasher.hash with correct params', async () => {
+    await sut(userData)
+
+    expect(hasher.hash).toHaveBeenCalledWith({ plaintext: userData.password })
+    expect(hasher.hash).toHaveBeenCalledTimes(1)
+  })
+
   it('should calls userAccountRepo.save with correct params', async () => {
     await sut(userData)
 
-    expect(userAccountRepo.save).toHaveBeenCalledWith(userData)
+    expect(userAccountRepo.save).toHaveBeenCalledWith({ ...userData, password: 'any_hash' })
     expect(userAccountRepo.save).toHaveBeenCalledTimes(1)
   })
 

@@ -1,11 +1,12 @@
 import 'dotenv/config'
+
 import request from 'supertest'
 import { sign } from 'jsonwebtoken'
 
+import { env } from '@/main/config/env'
 import { app } from '@/main/config/app'
 import { ForbiddenError } from '@/application/errors'
 import { auth } from '@/main/middlewares'
-import { env } from '@/main/config/env'
 
 describe('Authentication Middleware', () => {
   it('should return 403 if authorization header was not provided', async () => {
