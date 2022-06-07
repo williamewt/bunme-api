@@ -29,8 +29,8 @@ describe('RequiredStringValidation', () => {
   it('should return undefined if value is not empty', () => {
     const sut = new RequiredStringValidation('any_value', 'any_field')
 
-    const error = sut.validate()
+    const valid = sut.validate()
 
-    expect(error).toEqual(undefined)
+    expect(valid).toEqual(undefined)
   })
 })

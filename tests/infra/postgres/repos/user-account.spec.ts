@@ -186,4 +186,19 @@ describe('PgUserAccountRepository', () => {
       expect(id).toBe('1')
     })
   })
+
+  describe('save', () => {
+    it('should create an new account', async () => {
+      const { id } = await sut.save({
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      })
+
+      const pgUser = await sut.load({ email: 'any_email' })
+
+      expect(pgUser?.id).toBe('1')
+      expect(id).toBe('1')
+    })
+  })
 })

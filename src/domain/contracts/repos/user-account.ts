@@ -15,6 +15,7 @@ export namespace LoadUserAccount {
 
 type SetupSave = (params: SaveUserAccount.Input) => Promise<SaveUserAccount.Output>
 export interface SaveUserAccount {
+  save: SetupSave
   saveWithFacebook: SetupSave
   saveWithGoogle: SetupSave
   saveWithMicrosoft: SetupSave
@@ -25,7 +26,6 @@ export namespace SaveUserAccount {
     id?: string
     name: string
     email: string
-    cellphone?: string
     password?: string
     facebookId?: string
     googleId?: string

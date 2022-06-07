@@ -1,4 +1,6 @@
 export * from './required-string'
+export * from './email'
+export * from './equals'
 export * from './validator'
 export * from './composite'
 export * from './builder'

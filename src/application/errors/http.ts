@@ -13,6 +13,27 @@ export class RequiredFieldError extends Error {
   }
 }
 
+export class InvalidFieldError extends Error {
+  constructor (fieldName: string) {
+    super(`The ${fieldName} is invalid`)
+    this.name = 'InvalidFieldError'
+  }
+}
+
+export class FieldsNotMatchError extends Error {
+  constructor (fieldName: string) {
+    super(`${fieldName} fields do not match`)
+    this.name = 'FieldsNotMatchError'
+  }
+}
+
+export class DuplicateFieldError extends Error {
+  constructor (fieldName: string) {
+    super(`The received ${fieldName} is already in use`)
+    this.name = 'DuplicateFieldError'
+  }
+}
+
 export class UnauthorizedError extends Error {
   constructor () {
     super('Unauthorized')

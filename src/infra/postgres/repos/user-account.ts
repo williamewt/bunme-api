@@ -27,6 +27,13 @@ export class PgUserAccountRepository implements LoadUserAccount, SaveUserAccount
     }
   }
 
+  async save ({ name, email, password }: SaveUserInput): Promise<SaveUserOutput> {
+    const pgUser = await this.client.user.create({
+      data: { name, email, password }
+    })
+    return { id: pgUser.id.toString() }
+  }
+
   async saveWithFacebook ({ id, name, email, facebookId }: SaveUserInput): Promise<SaveUserOutput> {
     let resultId: string
     if (id === undefined) {
