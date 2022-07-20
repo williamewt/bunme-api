@@ -37,7 +37,7 @@ describe('Login Routes', () => {
       compareSpy.mockResolvedValueOnce(true)
 
       const { status, body } = await request(app)
-        .post('/api/login')
+        .post('/login')
         .send({ email: 'any_email@email.com', password: 'any_password' })
 
       expect(status).toBe(200)
@@ -48,7 +48,7 @@ describe('Login Routes', () => {
       loadByEmailSpy.mockResolvedValueOnce(undefined)
 
       const { status, body } = await request(app)
-        .post('/api/login')
+        .post('/login')
         .send({ email: 'any_invalid_email@email.com', password: 'any_password' })
 
       expect(status).toBe(400)
@@ -59,7 +59,7 @@ describe('Login Routes', () => {
       compareSpy.mockResolvedValueOnce(false)
 
       const { status, body } = await request(app)
-        .post('/api/login')
+        .post('/login')
         .send({ email: 'any_email@email.com', password: 'any_invalid_password' })
 
       expect(status).toBe(400)
@@ -88,7 +88,7 @@ describe('Login Routes', () => {
       saveWithFacebookSpy.mockResolvedValueOnce({ id: '1' })
 
       const { status, body } = await request(app)
-        .post('/api/login/facebook')
+        .post('/login/facebook')
         .send({ token: 'valid_token' })
 
       expect(status).toBe(200)
@@ -97,7 +97,7 @@ describe('Login Routes', () => {
 
     it('should return 401 with UnauthorizedError', async () => {
       const { status, body } = await request(app)
-        .post('/api/login/facebook')
+        .post('/login/facebook')
         .send({ token: 'invalid_token' })
 
       expect(status).toBe(401)
@@ -126,7 +126,7 @@ describe('Login Routes', () => {
       saveWithGoogleSpy.mockResolvedValueOnce({ id: '1' })
 
       const { status, body } = await request(app)
-        .post('/api/login/google')
+        .post('/login/google')
         .send({ code: 'valid_code' })
 
       expect(status).toBe(200)
@@ -135,7 +135,7 @@ describe('Login Routes', () => {
 
     it('should return 401 with UnauthorizedError', async () => {
       const { status, body } = await request(app)
-        .post('/api/login/google')
+        .post('/login/google')
         .send({ code: 'invalid_code' })
 
       expect(status).toBe(401)
@@ -160,7 +160,7 @@ describe('Login Routes', () => {
       saveWithMicrosoftSpy.mockResolvedValueOnce({ id: '1' })
 
       const { status, body } = await request(app)
-        .post('/api/login/microsoft')
+        .post('/login/microsoft')
         .send({ token: 'valid_token' })
 
       expect(status).toBe(200)
@@ -169,7 +169,7 @@ describe('Login Routes', () => {
 
     it('should return 401 with UnauthorizedError', async () => {
       const { status, body } = await request(app)
-        .post('/api/login/microsoft')
+        .post('/login/microsoft')
         .send({ token: 'invalid_token' })
 
       expect(status).toBe(401)

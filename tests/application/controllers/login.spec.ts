@@ -1,6 +1,6 @@
 import { LoginController } from '@/application/controllers'
 import { ServerError } from '@/application/errors'
-import { EmailValidation, RequiredStringValidation } from '@/application/validation'
+import { EmailValidation, MinLengthValidation, RequiredStringValidation } from '@/application/validation'
 
 describe('LoginController', () => {
   let authenticate: jest.Mock
@@ -25,7 +25,8 @@ describe('LoginController', () => {
     expect(validators).toEqual([
       new RequiredStringValidation('any_email@email.com', 'email'),
       new EmailValidation('any_email@email.com'),
-      new RequiredStringValidation('any_password', 'password')
+      new RequiredStringValidation('any_password', 'password'),
+      new MinLengthValidation('any_password', 'password', 6)
     ])
   })
 

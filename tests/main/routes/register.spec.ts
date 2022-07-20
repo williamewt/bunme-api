@@ -20,7 +20,7 @@ describe('Post /register', () => {
 
   it('should return 400 with RequiredFieldError if name is empty', async () => {
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: '', email: 'any_email@email.com', password: 'any_password', passwordConfirmation: 'any_password' })
 
     expect(status).toBe(400)
@@ -29,7 +29,7 @@ describe('Post /register', () => {
 
   it('should return 400 with RequiredFieldError if email is empty', async () => {
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: 'any_name', email: '', password: 'any_password', passwordConfirmation: 'any_password' })
 
     expect(status).toBe(400)
@@ -38,7 +38,7 @@ describe('Post /register', () => {
 
   it('should return 400 with RequiredFieldError if password is empty', async () => {
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: 'any_name', email: 'any_email@email.com', password: '', passwordConfirmation: 'any_password' })
 
     expect(status).toBe(400)
@@ -47,7 +47,7 @@ describe('Post /register', () => {
 
   it('should return 400 with FieldsNotMatchError if passwordConfirmation is different of password', async () => {
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: 'any_name', email: 'any_email@email.com', password: 'any_password', passwordConfirmation: 'any_different_password' })
 
     expect(status).toBe(400)
@@ -58,7 +58,7 @@ describe('Post /register', () => {
     loadCheckFieldSpy.mockResolvedValueOnce(true)
 
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: 'any_name', email: 'any_email@email.com', password: 'any_password', passwordConfirmation: 'any_password' })
     expect(status).toBe(400)
     expect(body.error).toBe(new DuplicateFieldError('email').message)
@@ -70,7 +70,7 @@ describe('Post /register', () => {
     saveSpy.mockResolvedValueOnce({ id: '1' })
 
     const { status, body } = await request(app)
-      .post('/api/register')
+      .post('/register')
       .send({ name: 'any_name', email: 'any_email@email.com', password: 'any_password', passwordConfirmation: 'any_password' })
 
     expect(status).toBe(200)

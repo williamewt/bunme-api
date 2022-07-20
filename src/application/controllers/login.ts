@@ -28,7 +28,7 @@ export class LoginController extends Controller {
   override buildValidators (params: HttpRequest): Validator[] {
     return [
       ...ValidationBuilder.of({ value: params.email, fieldName: 'email' }).required().email().build(),
-      ...ValidationBuilder.of({ value: params.password, fieldName: 'password' }).required().build()
+      ...ValidationBuilder.of({ value: params.password, fieldName: 'password' }).required().min(6).build()
     ]
   }
 }
